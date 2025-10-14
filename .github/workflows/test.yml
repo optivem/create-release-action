@@ -1,0 +1,51 @@
+name: Test Action
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test-action:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test Basic Release Creation
+        uses: ./
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          base-version: 'v1.0.0-test'
+          release-version: 'v1.0.0-test-qa-deployed-${{ github.run_number }}'
+          environment: 'qa'
+          status: 'deployed'
+
+      - name: Test Release with Artifacts
+        uses: ./
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          base-version: 'v1.0.0-test'
+          release-version: 'v1.0.0-test-staging-deployed-${{ github.run_number }}'
+          environment: 'staging'
+          status: 'deployed'
+          artifact-urls: '["https://example.com/artifact1", "https://example.com/artifact2"]'
+          is-prerelease: 'false'
+
+      - name: Test Failed Status
+        uses: ./
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          base-version: 'v1.0.0-test'
+          release-version: 'v1.0.0-test-prod-failed-${{ github.run_number }}'
+          environment: 'production'
+          status: 'failed'
+          is-prerelease: 'true'

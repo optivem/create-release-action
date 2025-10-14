@@ -1,0 +1,83 @@
+# Example workflow demonstrating how to use the create-release-action
+
+name: Example - Deploy with Release Tracking
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to deploy (e.g., v1.0.4)'
+        required: true
+        type: string
+      environment:
+        description: 'Target environment'
+        required: true
+        type: choice
+        options:
+          - qa
+          - staging
+          - production
+
+jobs:
+  deploy-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Required for creating releases
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Simulate building and packaging
+      - name: Build Application
+        run: |
+          echo "Building application version ${{ inputs.version }}"
+          # Your build steps here
+          
+      - name: Package Application
+        run: |
+          echo "Packaging application for ${{ inputs.environment }}"
+          # Your packaging steps here
+
+      # Simulate deployment
+      - name: Deploy to ${{ inputs.environment }}
+        id: deploy
+        run: |
+          echo "Deploying to ${{ inputs.environment }}"
+          # Your deployment logic here
+          
+          # Simulate deployment success/failure (remove this in real usage)
+          if [ "${{ inputs.environment }}" = "staging" ]; then
+            echo "status=deployed" >> $GITHUB_OUTPUT
+            echo "artifacts=[\"https://registry.example.com/myapp:${{ inputs.version }}\", \"https://packages.example.com/myapp-${{ inputs.version }}.zip\"]" >> $GITHUB_OUTPUT
+          else
+            echo "status=deployed" >> $GITHUB_OUTPUT
+            echo "artifacts=[\"https://registry.example.com/myapp:${{ inputs.version }}\"]" >> $GITHUB_OUTPUT
+          fi
+
+      # Create release on successful deployment
+      - name: Create Deployment Release
+        if: steps.deploy.outputs.status == 'deployed'
+        uses: optivem/create-release-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          base-version: ${{ inputs.version }}
+          release-version: '${{ inputs.version }}-${{ inputs.environment }}-deployed'
+          environment: ${{ inputs.environment }}
+          status: ${{ steps.deploy.outputs.status }}
+          artifact-urls: ${{ steps.deploy.outputs.artifacts }}
+          is-prerelease: ${{ inputs.environment != 'production' }}
+
+      # Create failure release if deployment failed
+      - name: Create Failure Release
+        if: failure()
+        uses: optivem/create-release-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          base-version: ${{ inputs.version }}
+          release-version: '${{ inputs.version }}-${{ inputs.environment }}-failed'
+          environment: ${{ inputs.environment }}
+          status: 'failed'
+          is-prerelease: 'true'

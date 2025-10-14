@@ -1,5 +1,9 @@
 name: 'Create Release'
 description: 'Creates a GitHub release for any pipeline stage (deployment, signoff, production)'
+author: 'Optivem'
+branding:
+  icon: 'tag'
+  color: 'blue'
 
 inputs:
   base-version:
