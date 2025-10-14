@@ -98,6 +98,27 @@ try {
     $releaseBody += "---`n*Created: $timestamp*"
 
     Write-Host "📝 Release Title: $releaseTitle" -ForegroundColor Green
+    Write-Host "📄 Checking if release already exists..." -ForegroundColor Yellow
+
+    # Check if release already exists and delete it if it does
+    $existingRelease = & gh release view $StatusVersion --repo $Repository 2>&1
+    
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "🗑️  Found existing release $StatusVersion, deleting it..." -ForegroundColor Yellow
+        Write-Host "📄 Existing release info: $($existingRelease | Select-Object -First 1)" -ForegroundColor Gray
+        
+        $deleteOutput = & gh release delete $StatusVersion --repo $Repository --yes 2>&1
+        
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "✅ Successfully deleted existing release" -ForegroundColor Green
+        } else {
+            Write-Host "⚠️  Failed to delete existing release: $deleteOutput" -ForegroundColor Yellow
+            Write-Host "📄 Proceeding to create release anyway..." -ForegroundColor Yellow
+        }
+    } else {
+        Write-Host "📄 No existing release found" -ForegroundColor Yellow
+    }
+
     Write-Host "📄 Creating release with GitHub CLI..." -ForegroundColor Yellow
 
     # Create the release using GitHub CLI
