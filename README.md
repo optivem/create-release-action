@@ -1,5 +1,8 @@
 # Create Release Action
 
+[![Example - Deploy with Release Tracking](https://github.com/optivem/create-release-action/actions/workflows/example.yml/badge.svg)](https://github.com/optivem/create-release-action/actions/workflows/example.yml)
+[![Test Action](https://github.com/optivem/create-release-action/actions/workflows/test.yml/badge.svg)](https://github.com/optivem/create-release-action/actions/workflows/test.yml)
+
 A GitHub Action that creates GitHub releases for any pipeline stage (deployment, signoff, production). This action is perfect for tracking deployments and status changes throughout your CI/CD pipeline.
 
 ## Features
