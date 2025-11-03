@@ -4,6 +4,7 @@
 [![Test Action](https://github.com/optivem/create-release-action/actions/workflows/test.yml/badge.svg)](https://github.com/optivem/create-release-action/actions/workflows/test.yml)
 
 [![GitHub release](https://img.shields.io/github/release/optivem/create-release-action.svg)](https://github.com/optivem/create-release-action/releases)
+[![GitHub](https://img.shields.io/github/license/optivem/create-release-action)](LICENSE)
 
 A GitHub Action that creates GitHub releases for any pipeline stage (deployment, signoff, production). This action is perfect for tracking deployments and status changes throughout your CI/CD pipeline.
 
