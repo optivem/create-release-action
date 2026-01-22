@@ -43,6 +43,25 @@ Write-Host "🌍 Environment: $Environment" -ForegroundColor Cyan
 Write-Host "📊 Status: $Status" -ForegroundColor Cyan
 Write-Host "🔖 Is Prerelease: $IsPrerelease" -ForegroundColor Cyan
 
+# Debug authentication
+Write-Host "🔍 Debugging authentication..." -ForegroundColor Yellow
+Write-Host "🔑 GitHubToken parameter present: $($GitHubToken -ne $null -and $GitHubToken -ne '')" -ForegroundColor Gray
+Write-Host "🔑 GH_TOKEN env var present: $($env:GH_TOKEN -ne $null -and $env:GH_TOKEN -ne '')" -ForegroundColor Gray
+
+# Ensure GH_TOKEN is set from parameter if not already set
+if ($env:GH_TOKEN -eq $null -or $env:GH_TOKEN -eq '') {
+    Write-Host "⚠️ GH_TOKEN environment variable not set, setting from parameter..." -ForegroundColor Yellow
+    $env:GH_TOKEN = $GitHubToken
+}
+
+# Check GitHub CLI authentication status
+Write-Host "🔐 Checking GitHub CLI authentication..." -ForegroundColor Yellow
+$authStatus = & gh auth status 2>&1
+Write-Host "📋 Auth status output: $authStatus" -ForegroundColor Gray
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "⚠️ GitHub CLI not authenticated, attempting to use token..." -ForegroundColor Yellow
+}
+
 try {
     # Parse artifact URLs
     $artifacts = @()
