@@ -1,3 +1,6 @@
+> [!WARNING]
+> This action has moved to [optivem/actions](https://github.com/optivem/actions). Use `optivem/actions/create-release@v1` instead.
+
 # Create Release Action
 
 [![Example - Deploy with Release Tracking](https://github.com/optivem/create-release-action/actions/workflows/example.yml/badge.svg)](https://github.com/optivem/create-release-action/actions/workflows/example.yml)
